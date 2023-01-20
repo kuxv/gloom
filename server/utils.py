@@ -1,5 +1,8 @@
 from __future__ import print_function
 from __future__ import absolute_import
+from __future__ import division
+from builtins import range
+from past.utils import old_div
 import sys
 import itertools
 import traceback
@@ -18,17 +21,17 @@ def debug( expression ):
 
 def get_offset( center, location, grid_height ):
   location_row = location % grid_height
-  location_column = location / grid_height
+  location_column = old_div(location, grid_height)
   center_row = center % grid_height
-  center_column = center / grid_height
+  center_column = old_div(center, grid_height)
 
   x = location_row - center_row
 
   column_delta = center_column - location_column
   if center_column % 2 == 0:
-    y = ( column_delta + 1 ) / 2
+    y = old_div(( column_delta + 1 ), 2)
   else:
-    y = column_delta / 2
+    y = old_div(column_delta, 2)
 
   z = column_delta - y
 
@@ -36,18 +39,18 @@ def get_offset( center, location, grid_height ):
 
 def apply_offset( center, offset, grid_height, grid_size ):
   location = center
-  column = center / grid_height
+  column = old_div(center, grid_height)
 
   column_delta = offset[1] + offset[2]
 
   location += offset[0] - offset[2]
   location -= column_delta * grid_height
-  location += ( column_delta + column % 2 ) / 2
+  location += old_div(( column_delta + column % 2 ), 2)
 
   column -= column_delta
 
   # test whether we went off the top or bottom of the board
-  final_column = location / grid_height
+  final_column = old_div(location, grid_height)
   if final_column != column:
     return None
 
@@ -85,7 +88,7 @@ def pin_offset( offset, pin ):
 def lengthen_line( line ):
   delta = ( line[1][0] - line[0][0], line[1][1] - line[0][1] )
   length = math.sqrt( delta[0] * delta[0] + delta[1] * delta[1] )
-  normal = ( delta[0] / length, delta[1] / length )
+  normal = ( old_div(delta[0], length), old_div(delta[1], length) )
   addition = ( EPSILON * normal[0], EPSILON * normal[1] )
   return (
     ( line[0][0] - addition[0], line[0][1] - addition[1] ),
@@ -107,7 +110,7 @@ def cross_product( vector_a, vector_b ):
 def direction( line ):
   delta = ( line[1][0] - line[0][0], line[1][1] - line[0][1] )
   length = math.sqrt( delta[0] * delta[0] + delta[1] * delta[1] )
-  return ( delta[0] / length, delta[1] / length )
+  return ( old_div(delta[0], length), old_div(delta[1], length) )
 
 def offset( location_a, location_b ):
   return ( location_b[0] - location_a[0], location_b[1] - location_a[1] )
@@ -155,8 +158,8 @@ def line_line_intersection( line_a, line_b ):
         return True
     return False
 
-  r = numerator1 / denominator
-  s = numerator2 / denominator
+  r = old_div(numerator1, denominator)
+  s = old_div(numerator2, denominator)
 
   return r >= 0 and r <= 1.0 and s >= 0.0 and s <= 1
 
@@ -176,7 +179,7 @@ def line_hex_edge_intersection( line_a, line_b ):
     # never collinear
     return None
 
-  s = numerator2 / denominator
+  s = old_div(numerator2, denominator)
 
   return s if s >= 0.0 and s <= 1.0 else None
 
@@ -188,7 +191,7 @@ def occluder_target_intersection( line_a, line_b ):
   denominator = ( ( b[0] - a[0] ) * ( d[1] - c[1] ) ) - ( ( b[1] - a[1] ) * ( d[0] - c[0] ) )
   numerator2 = ( ( a[1] - c[1] ) * ( b[0] - a[0] ) ) - ( ( a[0] - c[0] ) * ( b[1] - a[1] ) )
   # never parallel
-  return numerator2 / denominator
+  return old_div(numerator2, denominator)
 
 def visibility_cache_key( location_a, location_b ):
   if location_a < location_b:
@@ -236,7 +239,7 @@ def occluder_intersections( occluder_mappings ):
       divisor = occluder_a[2] - occluder_b[2]
       if divisor == 0.0:
         continue
-      t = ( occluder_b[0] - occluder_a[0] ) / divisor
+      t = old_div(( occluder_b[0] - occluder_a[0] ), divisor)
       if t > EPSILON and t < 1.0 - EPSILON:
         yield t
 
@@ -362,7 +365,7 @@ def get_line_intersections( line_index, occluder_mappings ):
       divisor = occluder_a[2] - occluder_b[2]
       if divisor == 0.0:
         continue
-      intersection = ( occluder_b[0] - occluder_a[0] ) / divisor
+      intersection = old_div(( occluder_b[0] - occluder_a[0] ), divisor)
       if intersection > -EPSILON and intersection < 1.0 + EPSILON:
         intersections.append( ( intersection, index, intersection ) )
 
@@ -408,7 +411,7 @@ def calculate_polygon_properties( polygon ):
 
   vertex_count = len( polygon )
 
-  prev_bot_index = prev_top_index = min( range( len( polygon ) ), key=polygon.__getitem__ )
+  prev_bot_index = prev_top_index = min( list(range( len( polygon ))), key=polygon.__getitem__ )
   ( prev_bot_x, prev_bot_y ) = ( prev_top_x, prev_top_y ) = polygon[prev_top_index]
 
   next_top_index = ( prev_top_index + 1 ) % vertex_count
@@ -422,10 +425,10 @@ def calculate_polygon_properties( polygon ):
     if next_top_x != prev_top_x and next_bot_x != prev_bot_x:
       x_l = x
       x_r = next_top_x if next_top_x < next_bot_x else next_bot_x
-      top_y_l = lerp( prev_top_y, next_top_y, ( x_l - prev_top_x ) / ( next_top_x - prev_top_x ) )
-      top_y_r = lerp( prev_top_y, next_top_y, ( x_r - prev_top_x ) / ( next_top_x - prev_top_x ) )
-      bot_y_l = lerp( prev_bot_y, next_bot_y, ( x_l - prev_bot_x ) / ( next_bot_x - prev_bot_x ) )
-      bot_y_r = lerp( prev_bot_y, next_bot_y, ( x_r - prev_bot_x ) / ( next_bot_x - prev_bot_x ) )
+      top_y_l = lerp( prev_top_y, next_top_y, old_div(( x_l - prev_top_x ), ( next_top_x - prev_top_x )) )
+      top_y_r = lerp( prev_top_y, next_top_y, old_div(( x_r - prev_top_x ), ( next_top_x - prev_top_x )) )
+      bot_y_l = lerp( prev_bot_y, next_bot_y, old_div(( x_l - prev_bot_x ), ( next_bot_x - prev_bot_x )) )
+      bot_y_r = lerp( prev_bot_y, next_bot_y, old_div(( x_r - prev_bot_x ), ( next_bot_x - prev_bot_x )) )
 
       delta_x = x_r - x_l
 

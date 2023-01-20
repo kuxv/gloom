@@ -1,6 +1,9 @@
+from __future__ import division
+from builtins import range
+from past.utils import old_div
 def unreduce_actions( s, actions ):
   def fix_location( location ):
-    column = location / s.MAP_HEIGHT
+    column = old_div(location, s.MAP_HEIGHT)
     row = location % s.MAP_HEIGHT
     column += s.REDUCE_COLUMN
     row += s.REDUCE_ROW
@@ -112,7 +115,7 @@ def init( s, width, height, aoe_width, aoe_height ):
   s.AOE_WIDTH = aoe_width
   s.AOE_HEIGHT = aoe_height
   s.AOE_SIZE = s.AOE_WIDTH * s.AOE_HEIGHT
-  s.AOE_CENTER = ( s.AOE_SIZE - 1 ) / 2;
+  s.AOE_CENTER = old_div(( s.AOE_SIZE - 1 ), 2);
   if s.AOE_WIDTH != 7 or s.AOE_HEIGHT != 7:
     exit()
   if int( s.AOE_CENTER ) - s.AOE_CENTER != 0:

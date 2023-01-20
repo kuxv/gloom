@@ -1,12 +1,17 @@
 from __future__ import print_function
 from __future__ import absolute_import
+from __future__ import division
+from builtins import zip
+from builtins import range
+from builtins import object
+from past.utils import old_div
 import sys, collections, textwrap, itertools, pprint
 from . import scenarios
 from .utils import *
 from .settings import *
 from .print_map import *
 
-class Scenario:
+class Scenario(object):
   def __init__( self ):
     self.correct_answer = None
     self.valid = True
@@ -61,7 +66,7 @@ class Scenario:
     # time
 
     for location in figures:
-      column = location / old_height
+      column = old_div(location, old_height)
       min_column = min( min_column, column )
       max_column = max( max_column, column )
       row = location % old_height
@@ -73,7 +78,7 @@ class Scenario:
         targets_min_row = min( targets_min_row, row )
         targets_max_row = max( targets_max_row, row )
     for location in contents:
-      column = location / old_height
+      column = old_div(location, old_height)
       min_column = min( min_column, column )
       max_column = max( max_column, column )
       row = location % old_height
@@ -81,7 +86,7 @@ class Scenario:
       max_row = max( max_row, row )
     for i in range( 6 ):
       for location in walls[i]:
-        column = location / old_height
+        column = old_div(location, old_height)
         min_column = min( min_column, column )
         max_column = max( max_column, column )
         row = location % old_height
@@ -108,7 +113,7 @@ class Scenario:
     max_row = max( max_row, targets_max_row )
     max_column = max( max_column, targets_max_column )
 
-    reduce_column = min_column / 2 * 2
+    reduce_column = old_div(min_column, 2) * 2
     reduce_row = min_row
 
     self.REDUCE_COLUMN = reduce_column
@@ -132,7 +137,7 @@ class Scenario:
     self.characters = []
 
     for location in figures:
-      column = location / old_height
+      column = old_div(location, old_height)
       row = location % old_height
       column -= reduce_column
       row -= reduce_row
@@ -140,7 +145,7 @@ class Scenario:
       self.figures[new_location] = old_figures[location]
       self.initiatives[new_location] = old_initiatives[location]
     for location in contents:
-      column = location / old_height
+      column = old_div(location, old_height)
       row = location % old_height
       column -= reduce_column
       row -= reduce_row
@@ -148,7 +153,7 @@ class Scenario:
       self.contents[new_location] = old_contents[location]
     for i in range( 6 ):
       for location in walls[i]:
-        column = location / old_height
+        column = old_div(location, old_height)
         row = location % old_height
         column -= reduce_column
         row -= reduce_row
@@ -348,12 +353,12 @@ class Scenario:
   def setup_vertices_list( self ):
     def calculate_vertex( location, vertex ):
       hex_row = location % self.MAP_HEIGHT
-      hex_column = location / self.MAP_HEIGHT
+      hex_column = old_div(location, self.MAP_HEIGHT)
 
       vertex_column = hex_column + [ 1, 1, 0, 0, 0, 1 ][vertex]
       vertex_row = 2 * hex_row + [ 1, 2, 2, 1, 0, 0 ][vertex] + ( hex_column % 2 )
 
-      x = 3 * ( vertex_column / 2 )
+      x = 3 * ( old_div(vertex_column, 2) )
       if vertex_row % 2 == 0:
         x += 0.5 + vertex_column % 2
       else:
@@ -374,7 +379,7 @@ class Scenario:
   def setup_neighbors_mapping( self ):
     def get_neighbors( location ):
       row = location % self.MAP_HEIGHT
-      column = location / self.MAP_HEIGHT
+      column = old_div(location, self.MAP_HEIGHT)
 
       bottom_edge = row == 0
       top_edge = row == self.MAP_HEIGHT - 1
@@ -420,8 +425,8 @@ class Scenario:
     return apply_offset( center, offset, self.MAP_HEIGHT, self.MAP_SIZE )
 
   def calculate_bounds( self, location_a, location_b ):
-    column_a = location_a / self.MAP_HEIGHT
-    column_b = location_b / self.MAP_HEIGHT
+    column_a = old_div(location_a, self.MAP_HEIGHT)
+    column_b = old_div(location_b, self.MAP_HEIGHT)
     if column_a < column_b:
       column_lower = max( column_a - 1, 0 )
       column_upper = min( column_b + 2, self.MAP_WIDTH )
@@ -644,9 +649,9 @@ class Scenario:
         self.debug_plot_point( color, ( x, y ) )
 
   def calculate_symmetric_coordinates( self, origin, location ):
-    column_a = origin / self.MAP_HEIGHT
+    column_a = old_div(origin, self.MAP_HEIGHT)
     row_a = origin % self.MAP_HEIGHT
-    column_b = location / self.MAP_HEIGHT
+    column_b = old_div(location, self.MAP_HEIGHT)
     row_b = location % self.MAP_HEIGHT
 
     c = column_b - column_a;
@@ -659,38 +664,38 @@ class Scenario:
       else:
         t = 3
     elif c < 0:
-      if r < ( q + c ) / 2:
+      if r < old_div(( q + c ), 2):
         t = 3
-      elif r < ( q - c ) / 2:
+      elif r < old_div(( q - c ), 2):
         t = 2
       else:
         t = 1
     else:
-      if r <= ( q - c ) / 2:
+      if r <= old_div(( q - c ), 2):
         t = 4
-      elif r <= ( q + c ) / 2:
+      elif r <= old_div(( q + c ), 2):
         t = 5
       else:
         t = 0
 
     if t == 0:
-      u = r - ( q - c ) / 2
+      u = r - old_div(( q - c ), 2)
       v = c
     elif t == 1:
-      u = r - ( q + c ) / 2
-      v = r - ( q - c ) / 2
+      u = r - old_div(( q + c ), 2)
+      v = r - old_div(( q - c ), 2)
     elif t == 2:
       u = -c
-      v = r - ( q + c ) / 2
+      v = r - old_div(( q + c ), 2)
     elif t == 3:
-      u = -r + ( q - c ) / 2
+      u = -r + old_div(( q - c ), 2)
       v = -c
     elif t == 4:
-      u = -r + ( q + c ) / 2
-      v = -r + ( q - c ) / 2
+      u = -r + old_div(( q + c ), 2)
+      v = -r + old_div(( q - c ), 2)
     else:
       u = c
-      v = -r + ( q + c ) / 2
+      v = -r + old_div(( q + c ), 2)
 
     return t, u, v
 
@@ -894,7 +899,7 @@ class Scenario:
 
     bounds = self.calculate_bounds( location_a, location_b )
 
-    class v:
+    class v(object):
       shortest_length = float( 'inf' )
       shortest_line = None
     def consider_sightline( location_a, vertex_a, location_b, vertex_b ):
@@ -951,7 +956,7 @@ class Scenario:
   def dereduce_location( self, location ):
     if not self.reduced:
       return location
-    column = location / self.MAP_HEIGHT
+    column = old_div(location, self.MAP_HEIGHT)
     row = location % self.MAP_HEIGHT
     column += self.REDUCE_COLUMN
     row += self.REDUCE_ROW
@@ -1172,7 +1177,7 @@ class Scenario:
     # _ = [ self.calculate_symmetric_coordinates( active_monster, _ ) for _ in range( self.MAP_SIZE ) ]
 
     # doesn't speed things up but makes los testing order more intuitive for debugging
-    travel_distance_sorted_map = sorted( range( self.MAP_SIZE ), key=lambda x: travel_distances[x] )
+    travel_distance_sorted_map = sorted( list(range( self.MAP_SIZE)), key=lambda x: travel_distances[x] )
 
     # process aoe
     if AOE_ACTION:
@@ -1187,7 +1192,7 @@ class Scenario:
       PRECALC_GRID_HEIGHT = 21
       PRECALC_GRID_WIDTH = 21
       PRECALC_GRID_SIZE = PRECALC_GRID_HEIGHT * PRECALC_GRID_WIDTH
-      PRECALC_GRID_CENTER = ( PRECALC_GRID_SIZE - 1 ) / 2
+      PRECALC_GRID_CENTER = old_div(( PRECALC_GRID_SIZE - 1 ), 2)
 
       aoe_pattern_set = set()
       for aoe_pin in aoe:
@@ -1218,7 +1223,7 @@ class Scenario:
       focuses = set()
 
     else:
-      class s:
+      class s(object):
         focuses = set()
         shortest_path = (
           MAX_VALUE - 1, # traps to attack potential focus
@@ -1302,7 +1307,7 @@ class Scenario:
 
       # find the best group of targets based on the following priorities
 
-      class t:
+      class t(object):
         groups = set()
         best_group = (
           MAX_VALUE - 1, # traps to the attack location
@@ -1424,7 +1429,7 @@ class Scenario:
       # given the target group, find the best destinations to attack from
       # based on the following priorities
 
-      class u:
+      class u(object):
         destinations = set()
         aoes = {}
         best_destination = (
