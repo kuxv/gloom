@@ -1,8 +1,10 @@
+from __future__ import print_function
+from __future__ import absolute_import
 import sys
 import itertools
 import traceback
 import pprint
-from settings import *
+from .settings import *
 
 COS_30 = math.cos( 30.0 / 180.0 * math.pi )
 EPSILON = 1e-12
@@ -12,7 +14,7 @@ def debug( expression ):
   frame = sys._getframe( 1 )
   a = eval( expression, frame.f_globals, frame.f_locals )
   r = pprint.pformat( a )
-  print '%s = %s' % ( expression, r )
+  print('%s = %s' % ( expression, r ))
 
 def get_offset( center, location, grid_height ):
   location_row = location % grid_height
@@ -207,19 +209,24 @@ def within_bound( location, line, line_direction ):
   location_dir = direction( ( line[0], location ) )
   return cross_product( bound_dir, location_dir ) < -EPSILON
 
-def occluder_less_than( ( value_a, slope_a ), ( value_b, slope_b ) ):
+def occluder_less_than(xxx_todo_changeme, xxx_todo_changeme1 ):
+  ( value_a, slope_a ) = xxx_todo_changeme
+  ( value_b, slope_b ) = xxx_todo_changeme1
   if abs( value_a - value_b ) < EPSILON:
     return slope_a < slope_b
   else:
     return value_a < value_b
 
-def occluder_greater_than( ( value_a, slope_a ), ( value_b, slope_b ) ):
+def occluder_greater_than(xxx_todo_changeme2, xxx_todo_changeme3 ):
+  ( value_a, slope_a ) = xxx_todo_changeme2
+  ( value_b, slope_b ) = xxx_todo_changeme3
   if abs( value_a - value_b ) < EPSILON:
     return slope_a > slope_b
   else:
     return value_a > value_b
 
-def get_occluder_value_at( ( value_at_zero, value_at_one, slope ), at ):
+def get_occluder_value_at(xxx_todo_changeme4, at ):
+  ( value_at_zero, value_at_one, slope ) = xxx_todo_changeme4
   return lerp( value_at_zero, value_at_one, at ), slope
 
 def occluder_intersections( occluder_mappings ):

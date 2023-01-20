@@ -1,8 +1,10 @@
+from __future__ import print_function
+from __future__ import absolute_import
 import sys, collections, textwrap, itertools, pprint
-import scenarios
-from utils import *
-from settings import *
-from print_map import *
+from . import scenarios
+from .utils import *
+from .settings import *
+from .print_map import *
 
 class Scenario:
   def __init__( self ):
@@ -1145,9 +1147,9 @@ class Scenario:
         out = 'NO ACTION'
       else:
         out = out[2:]
-      print out
+      print(out)
       if self.message:
-        print textwrap.fill( self.message, 82 )
+        print(textwrap.fill( self.message, 82 ))
 
     actions = set()
     aoes = {}
@@ -1724,7 +1726,7 @@ class Scenario:
         actions[_]['debug_lines'] = list( debug_lines[raw_action] )
 
     if self.logging:
-      print '%i option(s):' % len( actions )
+      print('%i option(s):' % len( actions ))
       for action in actions:
         if action['move'] == self.dereduce_location( start_location ):
           out = '- no movement'
@@ -1733,7 +1735,7 @@ class Scenario:
         if action['attacks']:
           for attack in action['attacks']:
             out += ', attack %i' % attack
-        print out
+        print(out)
 
     return actions
 
@@ -1797,7 +1799,7 @@ class Scenario:
     self.debug_lines.add( ( color, ( scale_vector( DEBUG_PLOT_SCALE, point ), ) ) )
 
 def perform_unit_tests( starting_scenario ):
-  print 'performing unit tests...'
+  print('performing unit tests...')
 
   failed_scenarios = []
 
@@ -1818,7 +1820,7 @@ def perform_unit_tests( starting_scenario ):
     # scenario.reduce_map()
 
     if not scenario.correct_answer:
-      print 'test %3i: no answer listed' % scenario_index
+      print('test %3i: no answer listed' % scenario_index)
       continue
 
     answers, _, _, _, _, _ = scenario.calculate_monster_move()
@@ -1831,13 +1833,13 @@ def perform_unit_tests( starting_scenario ):
     else:
       failed_scenarios.append( ( rules, scenario_index ) )
       result = 'fail'
-    print 'test %s-%3i: %s' % ( [ 'F', 'G', 'J' ][rules], scenario_index, result )
+    print('test %s-%3i: %s' % ( [ 'F', 'G', 'J' ][rules], scenario_index, result ))
 
-  print
+  print()
   if len( failed_scenarios ) == 0:
-    print 'passed all tests'
+    print('passed all tests')
   else:
-    print 'failed %i test(s):' % len( failed_scenarios )
+    print('failed %i test(s):' % len( failed_scenarios ))
     for rules, scenario in failed_scenarios:
       rule_text = [ 'Frosthaven', 'Gloomhaven', 'Jaws of the Lion' ][rules]
-      print '  %s - %i' % ( rule_text, scenario )
+      print('  %s - %i' % ( rule_text, scenario ))

@@ -1,4 +1,6 @@
-from settings import *
+from __future__ import print_function
+from __future__ import absolute_import
+from .settings import *
 
 class Colors:
   purple = '\033[95m'
@@ -94,13 +96,13 @@ def print_map( s, grid_width, grid_height, walls, top_label, bottom_label, extra
   for j in range( 0, grid_width / 2 ):
     location = 2 * grid_height + 2 * j * grid_height - 1
     out += '       %s' % top_edge_glyph( walls, location, 1 )
-  print out
+  print(out)
 
   out = ' '
   for j in range( 0, grid_width / 2 ):
     location = 2 * grid_height + 2 * j * grid_height - 1
     out += '     %s %s %s' % ( north_edge_glyph( walls, location, 2 ), extra_label[location], south_edge_glyph( walls, location, 0 ) )
-  print out
+  print(out)
 
   out = '  '
   for j in range( 0, grid_width / 2 ):
@@ -110,7 +112,7 @@ def print_map( s, grid_width, grid_height, walls, top_label, bottom_label, extra
   if grid_width % 2:
     base_edge_location = grid_height + ( grid_width - 1 ) * grid_height - 1
     out += '%s' % ( top_edge_glyph( walls, base_edge_location, 1 ) )
-  print out
+  print(out)
 
   for i in range( 0, grid_height - 1 ):
     left_location = grid_height - i - 1
@@ -123,7 +125,7 @@ def print_map( s, grid_width, grid_height, walls, top_label, bottom_label, extra
     if grid_width % 2:
       extra_label_location = grid_height - i + ( grid_width - 1 ) * grid_height - 1
       out += ' %s %s' % ( extra_label[extra_label_location], south_edge_glyph( walls, extra_label_location, 0 ) )
-    print out
+    print(out)
 
     out = '%s' % north_edge_glyph( walls, left_location, 2 )
     for j in range( 0, grid_width / 2 ):
@@ -133,7 +135,7 @@ def print_map( s, grid_width, grid_height, walls, top_label, bottom_label, extra
     if grid_width % 2:
       label_location = grid_height - i + ( grid_width - 1 ) * grid_height - 1
       out += ' %s %s' % ( top_label[label_location], south_edge_glyph( walls, label_location, 0 ) )
-    print out
+    print(out)
 
     out = '%s' % south_edge_glyph( walls, left_location, 3 )
     for j in range( 0, grid_width / 2 ):
@@ -143,7 +145,7 @@ def print_map( s, grid_width, grid_height, walls, top_label, bottom_label, extra
     if grid_width % 2:
       label_location = grid_height - i + ( grid_width - 1 ) * grid_height - 1
       out += ' %s %s' % ( bottom_label[label_location], north_edge_glyph( walls, label_location, 5 ) )
-    print out
+    print(out)
 
     out = ' %s' % south_edge_glyph( walls, left_location, 3 )
     for j in range( 0, grid_width / 2 ):
@@ -153,7 +155,7 @@ def print_map( s, grid_width, grid_height, walls, top_label, bottom_label, extra
     if grid_width % 2:
       base_edge_location = grid_height - i + ( grid_width - 1 ) * grid_height - 1
       out += '%s%s' % ( top_edge_glyph( walls, base_edge_location, 4 ), north_edge_glyph( walls, base_edge_location, 5 ) )
-    print out
+    print(out)
 
   out = ' %s' % north_edge_glyph( walls, 0, 2 )
   for j in range( 0, grid_width / 2 ):
@@ -163,7 +165,7 @@ def print_map( s, grid_width, grid_height, walls, top_label, bottom_label, extra
   if grid_width % 2:
     label_location = ( grid_width - 1 ) * grid_height
     out += ' %s %s' % ( extra_label[label_location], south_edge_glyph( walls, label_location, 0 ) )
-  print out
+  print(out)
 
   out = '%s' % north_edge_glyph( walls, 0, 2 )
   for j in range( 0, grid_width / 2 ):
@@ -173,7 +175,7 @@ def print_map( s, grid_width, grid_height, walls, top_label, bottom_label, extra
   if grid_width % 2:
     label_location = ( grid_width - 1 ) * grid_height
     out += ' %s %s' % ( top_label[label_location], south_edge_glyph( walls, label_location, 0 ) )
-  print out
+  print(out)
 
   out = ''
   for j in range( 0, grid_width / 2 ):
@@ -182,7 +184,7 @@ def print_map( s, grid_width, grid_height, walls, top_label, bottom_label, extra
   if grid_width % 2:
     location = ( grid_width - 1 ) * grid_height
     out += '%s %s %s' % ( south_edge_glyph( walls, location, 3 ), bottom_label[location], north_edge_glyph( walls, location, 5 ) )
-  print out
+  print(out)
 
   out = ''
   for j in range( 0, grid_width / 2 ):
@@ -191,4 +193,4 @@ def print_map( s, grid_width, grid_height, walls, top_label, bottom_label, extra
   if grid_width % 2:
     location = ( grid_width - 1 ) * grid_height
     out += ' %s%s%s' % ( south_edge_glyph( walls, location, 3 ), top_edge_glyph( walls, location, 4 ), north_edge_glyph( walls, location, 5 ) )
-  print out
+  print(out)

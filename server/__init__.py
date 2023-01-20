@@ -1,5 +1,6 @@
-import scenarios
-import solver
+from __future__ import absolute_import
+from . import scenarios
+from . import solver
 
 from flask import Flask, url_for, jsonify, redirect, request, render_template, abort
 import time
@@ -8,7 +9,7 @@ app.jinja_env.trim_blocks = True
 app.jinja_env.lstrip_blocks = True
 
 # Configuration
-from production import production
+from .production import production
 debug = not production
 
 title = 'Gloomhaven Monster Mover'
