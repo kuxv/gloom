@@ -6,4 +6,5 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-CMD [ "python", "-m", "flask", "--app", "server", "run", "--host", "0.0.0.0"]
+EXPOSE 80
+CMD [ "python", "-m", "flask", "--app", "server", "run", "--host", "0.0.0.0:80"]
